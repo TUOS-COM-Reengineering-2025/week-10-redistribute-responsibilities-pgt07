@@ -1,8 +1,4 @@
-from Staff import Staff
-
-
 class Branch:
-
     def __init__(self, location):
         self._location = location
         self._staff = []

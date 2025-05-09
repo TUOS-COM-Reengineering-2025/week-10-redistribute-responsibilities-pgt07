@@ -6,7 +6,8 @@ class Payroll:
         self.staff_category_pay_schedules = {"Manager": PaySchedule("1st")}
 
     def get_staff_category_pay_schedule(self, staff_category):
-        return self.staff_category_pay_schedules[staff_category]
+        return self.staff_category_pay_schedules.get(staff_category, PaySchedule("1st"))
 
     def get_staff_category_pay_day(self, staff_category):
-        return self.staff_category_pay_schedules[staff_category].get_pay_date()
+        schedule = self.staff_category_pay_schedules.get(staff_category)
+        return schedule.get_pay_date() if schedule else None
