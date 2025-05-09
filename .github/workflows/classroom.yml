@@ -1,0 +1,40 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: regression test
+      id: regression-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: regression test
+        setup-command: ''
+        command: python3 -m unittest tests/test_client.py
+        timeout: 1
+        max-score: 5
+    - name: mini-report
+      id: mini-report
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: mini-report
+        setup-command: ''
+        command: python -m unittest tests/test_autograde.py
+        timeout: 1
+        max-score: 5
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        REGRESSION-TEST_RESULTS: "${{steps.regression-test.outputs.result}}"
+        MINI-REPORT_RESULTS: "${{steps.mini-report.outputs.result}}"
+      with:
+        runners: regression-test,mini-report
